@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  sqlserver:
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=myStrongPassword12#
+    ports:
+      - 1433:1433
+    volumes:
+      - sqldata:/var/opt/mssql/server
+        # - type: volume
+        #   source: sqldata
+        #   target: /var/opt/mssql
+    image: mcr.microsoft.com/mssql/server
+    deploy:
+      resources:
+        reservations:
+          cpus: '2'
+          memory: 2GB
+  watchlist:
+    container_name: web-app
+    ports:
+      - 80:80
+    image: shadowwalkermoviescr.azurecr.io/watchlist
+    domainname: shadowwalker
+    # build:
+    #   dockerfile: ./Dockerfile
+    restart: on-failure
+# networks:
+#     homies-network:
+#         external: true
+volumes:
+  sqldata:
+    # external: true
+    driver: azure_file
+    driver_opts:
+      share_name: sql-volume
+      storage_account_name: shadowwalkermoviessa
